@@ -39,7 +39,7 @@
     <script>
         function confirmForceForceDelete() {
             //チェックボックスの要素を全て取得
-            let deleteCheckboxes = document.querySelectorAll('form[action$="{{ route('items.forceDelete') }}"] input[name="ids[]"]:checked');
+            let deleteCheckboxes = document.querySelectorAll('input[name="ids[]"]:checked');
 
             //1つも選択されてなければ処理を中止
             if (deleteCheckboxes.length == 0) {

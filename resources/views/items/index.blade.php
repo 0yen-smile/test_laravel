@@ -9,7 +9,7 @@
     <!-- 商品登録フォーム -->
      <h1>商品登録</h1>
      <form action={{route('items.store')}} method="POST">
-        @csrf  
+        @csrf
         <label>製品名：<input type="text" name="name" required></label>
         <label>価格：<input type="number" name="price" required></label>
         <button type="submit" onclick="return confirmEntry()">登録</button>
@@ -43,6 +43,8 @@
         <!-- 選択した製品を削除するボタン -->
         <button type="submit" onclick="return confirmDelete()">選択した製品を商品一覧から消去</button>
     </form>
+    <br>
+    <a href="{{ route('items.updatePage' )}}">>>製品情報編集ページへ移動</a>
 
     <hr>
 
@@ -72,7 +74,7 @@
         <button type="submit" onclick="return confirmRestore()">選択した製品を商品一覧へ復元</button>
     </form>
     <br>
-    <a href="{{ route('items.forceDeletePage' )}}">>>完全削除ページへ</a>
+    <a href="{{ route('items.forceDeletePage' )}}">>>完全削除ページへ移動</a>
 
 
 

@@ -20,3 +20,9 @@ Route::get('/items/force_delete', [ItemController::class, 'showForceDeletePage']
 
 //完全削除処理
 Route::delete('/items/force_delete', [ItemController::class, 'forceDelete'])->name('items.forceDelete');
+
+//編集ページの表示
+Route::get('/items/update', [ItemController::class, 'showUpdatePage'])->name('items.updatePage');
+
+//編集処理
+Route::put('/items/update', [ItemController::class, 'update'])->name('items.update');

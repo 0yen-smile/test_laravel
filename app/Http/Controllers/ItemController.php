@@ -138,6 +138,10 @@ class ItemController extends Controller {
     //完全削除処理
     public function forceDelete(Request $request) {
         $ids = $request->input('ids');
+        if(empty($ids)) {
+            session()->flash('error_message', '編集する商品が選択されていません。');
+            return redirect()->route('items.force_delete'); 
+        }     
     
         if(!empty($ids)) {
             try{
@@ -169,6 +173,48 @@ class ItemController extends Controller {
                 session()->flash('error_message', '製品の削除中にエラーが発生しました。もう一度お試しください。');
                 return redirect()->route('items.index');
             }
+        }
+    }
+
+    //製品編集ページの表示処理
+    public function showUpdatePage() {
+        $items = Item::all();
+        return view('items.update', compact('items'));
+    }
+
+    public function update(Request $request) {
+        $ids = $request->input('ids');
+        
+        try {        
+            // バリデーション
+            foreach($ids as $id) {
+                $request->validate([
+                    "name.$id" => 'required|string|max:255',
+                    "price.$id" => 'required|integer|min:0|max:2147483647',
+                    
+                ], [
+                    'price.*.required' => '価格が入力されていません。',
+                    'price.*.integer' => '価格は整数で入力してください。',
+                    'price.*.min' => '価格は0以上を指定してください。',
+                    'price.*.max' => '価格は2147483647以下を指定してください。',
+                ]);
+
+                // 対象商品の価格を更新
+                $item = Item::findOrFail($id);
+                $item->update([
+                    'name' => $request->input("name.$id"),
+                    'price' => $request->input("price.$id"),
+                ]);
+            }
+
+            // 成功メッセージ
+            session()->flash('success_message', '商品情報を更新しました。');
+            return redirect()->route('items.index');
+
+        } catch (\Exception $e) {
+            \Log::error('商品編集中にエラー: ' . $e->getMessage(), ['error' => $e->getTraceAsString()]);
+            session()->flash('error_message', '商品編集中にエラーが発生しました。');
+            return redirect()->route('items.update');
         }
     }
 }
