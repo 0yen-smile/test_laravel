@@ -139,7 +139,7 @@ class ItemController extends Controller {
     public function forceDelete(Request $request) {
         $ids = $request->input('ids');
         if(empty($ids)) {
-            session()->flash('error_message', '編集する商品が選択されていません。');
+            session()->flash('error_message', '削除する商品が選択されていません。');
             return redirect()->route('items.force_delete'); 
         }     
     
@@ -184,10 +184,30 @@ class ItemController extends Controller {
 
     public function update(Request $request) {
         $ids = $request->input('ids');
+
+        if(empty($ids)) {
+            session()->flash('error_message', '編集する商品が選択されていません。');
+            return redirect()->route('items.update'); 
+        } 
         
-        try {        
-            // バリデーション
+        try { 
             foreach($ids as $id) {
+                $item = Item::find($id);
+                if(!$item) {
+                    session()->flash('error_message', "ID &id の商品が存在しません。");
+                    return redirect()->route('items.update');
+                } 
+                // フォーム送信時のupdate_atを取得（比較時にDBのupdated_atをフォーマットを統一） 
+                $formUpdatedAt = $request->input("updated_at.$id");
+                $dbUpdatedAt = $item->updated_at->format('Y-m-d H:i:s');
+            
+                //データベース上のupdate_atを取得し、$formUpdatedAtと比較
+                if ($formUpdatedAt !== $dbUpdatedAt){
+                    session()->flash('error_message', "ID $id の商品は既に他のユーザーに更新されています。最新の情報に更新してください。");
+                    return redirect()->route('items.update');
+                }
+
+            // バリデーション
                 $request->validate([
                     "name.$id" => 'required|string|max:255',
                     "price.$id" => 'required|integer|min:0|max:2147483647',

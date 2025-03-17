@@ -27,6 +27,8 @@
                 <td>{{ $item->id }}</td>
                 <td><input type="text" name="name[{{ $item->id }}]" value="{{ $item->name }}" required></td>
                 <td><input type="number" name="price[{{ $item->id }}]" value="{{ $item->price }}" required></td>
+                <!-- update_atを隠しフィールドで送信 -->
+                <input type="hidden" name="updated_at[{{ $item->id }}]" value="{{ $item->updated_at }}">
             </tr>
             @endforeach
         </table>
